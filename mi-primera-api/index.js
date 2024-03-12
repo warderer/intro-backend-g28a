@@ -68,6 +68,23 @@ app.post('/mascotas', (req, res)=> {
     res.status(201).json(arrayMascota);
 });
 
+app.delete('/mascotas/:id', (req, res) => {
+    const idBusqueda = req.params.id;
+
+    const arrayMascota = [
+        {id: 1, nombre: 'max'},
+        {id: 2, nombre: 'mex'},
+    ];
+    // Busca la mascota por ID
+    const mascotaEncontrada = arrayMascota.find(mascota => mascota.id == idBusqueda);
+
+    if (mascotaEncontrada) {
+        res.status(204).json();
+    } else {
+        res.status(404).json({ message: 'Mascota no existe' });
+    }
+
+});
 
 // Levantar el servidor
 app.listen(3000, () => {
