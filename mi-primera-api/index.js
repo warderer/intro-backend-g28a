@@ -26,7 +26,7 @@ app.get('/empleados', (req, res) => {
 
 // Obtener todas as mascotas (GET)
 app.get('/mascotas',(req, res) => {
-    console.log(req.query.name);
+    console.log(req.query);
     const arrayMascota = [
         {id: 1, nombre: 'max'},
         {id: 2, nombre: 'mex'},
@@ -85,6 +85,17 @@ app.delete('/mascotas/:id', (req, res) => {
     }
 
 });
+
+
+// Para crear tres endpoints que sumen dos dígitos.
+
+// El enpoint e debe de llamar "/api/suma"
+// Y uno debe de ser por query y otro por params
+
+// params: api/suma/1/6 la respuesta debe de ser { suma: 7}
+// query: api/suma?num1=5&num2=6 la respuesta debe de ser { suma: 11}
+// body: api/suma, body { num1: 2, num2: 6 } la respuesta debe de ser { suma: 8}
+
 
 // Levantar el servidor
 app.listen(3000, () => {
