@@ -33,7 +33,7 @@ app.post('/api/mascotas', (req, res) => {
 // Get all
 app.get('/api/mascotas', async (req, res) => { 
     try {
-        const todasMascotas = await db.select('*').from('mascotas');
+        const todasMascotas = await db.select('*').from('mascotas').where({ active: true });
         res.status(200).json(todasMascotas);
     } catch (error) {
         console.log(error);
@@ -47,12 +47,54 @@ app.get('/api/mascotas', async (req, res) => {
 app.get('/api/mascotas/:id', async (req, res) => {
     try {
         const idMascota = req.params.id;
-        const mascota = await db.select('*').from('mascotas').where({ mascota_id: idMascota });
+        const mascota = await db.select('*').from('mascotas').where({ mascota_id: idMascota, active: true });
         if (mascota.length === 0) {
             res.status(404).json({ message: 'Mascota no encontrada' });
         } else {
             res.status(200).json(mascota[0]);
         }
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
+    }
+});
+
+
+// Update one by id
+app.put('/api/mascotas/:id', async (req, res) => {
+    try {
+        const idMascota = req.params.id;
+        const bodyToUpdate = req.body;
+
+        const updatedMascota = await db
+            .update(bodyToUpdate)
+            .from('mascotas')
+            .where({ mascota_id: idMascota, active: true })
+            .returning(['mascota_id', 'name', 'breed', 'age', 'active']);
+
+        res.status(200).json(updatedMascota);
+        
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
+    }
+});
+
+// Delete one by id
+app.delete('/api/mascotas/:id', async (req, res) => {
+    try {
+        const idMascota = req.params.id;
+        // Borrado fisico
+        // await db.del().from('mascotas').where({ mascota_id: idMascota })
+
+        // Borrado lógico
+        await db
+            .update({ active: false })
+            .from('mascotas')
+            .where({ mascota_id: idMascota })
+        
+        res.status(204).json();
+        
     } catch (error) {
         console.log(error);
         res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
