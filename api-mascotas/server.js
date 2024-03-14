@@ -15,6 +15,40 @@ app.get('/', (req, res) => {
 // CRUD
 
 // Create
+app.post('/api/users', (req, res) => {
+    const user = req.body;
+    // Guardar en la base de datos
+    db
+        .insert(user)
+        .into('users')
+        .returning(['user_id', 'name', 'last_name', 'phone_number'])
+        .then((user) => {
+            res.status(201).json(user);
+        }).catch((err) => {
+            console.log(err);
+            res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
+        });
+});
+
+// Quiero obtener la mascota del usuario 1
+app.get('/api/users/:id/mascotas', async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        const response = await db
+            .select('*')
+            .from('mascotas')
+            .where({ user: userId })
+            .join('users', { 'users.user_id': 'mascotas.user' })
+
+        res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
+    }
+});
+
+// Create
 app.post('/api/mascotas', (req, res) => {
     const mascota = req.body;
     // Guardar en la base de datos
@@ -29,6 +63,7 @@ app.post('/api/mascotas', (req, res) => {
             res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
         });
 });
+
 
 // Get all
 app.get('/api/mascotas', async (req, res) => { 
