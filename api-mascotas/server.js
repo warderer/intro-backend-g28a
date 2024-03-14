@@ -14,7 +14,6 @@ app.get('/', (req, res) => {
 
 // CRUD
 
-
 // Create
 app.post('/api/mascotas', (req, res) => {
     const mascota = req.body;
@@ -29,12 +28,17 @@ app.post('/api/mascotas', (req, res) => {
             console.log(err);
             res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
         });
-
 });
 
 // Get all
-app.get('/api/mascotas', (req, res) => {
-    
+app.get('/api/mascotas', async (req, res) => { 
+    try {
+        const todasMascotas = await db.select('*').from('mascotas');
+        res.status(200).json(todasMascotas);
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
+    }
 });
 
 
