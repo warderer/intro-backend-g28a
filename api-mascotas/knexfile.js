@@ -7,16 +7,17 @@ module.exports = {
 
   development: {
     client: 'postgresql',
-    connection: "postgres://user:password@floppy.db.elephantsql.com/nameDb"
-    // postgres://user:contraseña@localhost:5432/mascota
+    connection: ""
+    // postgres://user:contraseña@localhost:5432/dbname
   },
 
   staging: {
     client: 'postgresql',
     connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
+      host: 'floppy.db.elephantsql.com',
+      database: 'svmlgssa',
+      user:     'svmlgssa',
+      password: 'U7ZN1_DCg7VnjuwWAtBq7ULNYmuvOdKF'
     },
     pool: {
       min: 2,
