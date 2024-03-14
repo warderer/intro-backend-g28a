@@ -41,6 +41,23 @@ app.get('/api/mascotas', async (req, res) => {
     }
 });
 
+// Get one by id
+// /api/mascotas/1
+// /api/mascotas/2
+app.get('/api/mascotas/:id', async (req, res) => {
+    try {
+        const idMascota = req.params.id;
+        const mascota = await db.select('*').from('mascotas').where({ mascota_id: idMascota });
+        if (mascota.length === 0) {
+            res.status(404).json({ message: 'Mascota no encontrada' });
+        } else {
+            res.status(200).json(mascota[0]);
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
+    }
+});
 
 
 app.listen(3000, () => {
