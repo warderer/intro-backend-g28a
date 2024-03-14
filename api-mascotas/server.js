@@ -36,7 +36,12 @@ app.get('/api/users/:id/mascotas', async (req, res) => {
         const userId = req.params.id;
 
         const response = await db
-            .select('*')
+            .select(
+                'mascotas.name as mascotaName', 
+                'users.name as userName', 
+                'mascotas.*', 
+                'users.*'
+            )
             .from('mascotas')
             .where({ user: userId })
             .join('users', { 'users.user_id': 'mascotas.user' })
