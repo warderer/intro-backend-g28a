@@ -1,7 +1,5 @@
 const express = require('express');
-
-// Mandando a llamar la conexión a la base de datos
-const db = require('./config');
+const masctotaRoutes = require('./routes/mascotasRoutes');
 
 const app = express();
 
@@ -53,72 +51,10 @@ app.get('/api/users/:id/mascotas', async (req, res) => {
     }
 });
 
-// Create
-app.post('/api/mascotas', (req, res) => {
-    const mascota = req.body;
-    // Guardar en la base de datos
-    db
-        .insert(mascota)
-        .into('mascotas')
-        .returning(['mascota_id', 'name', 'breed', 'age', 'active'])
-        .then((newMascota) => {
-            res.status(201).json(newMascota);
-        }).catch((err) => {
-            console.log(err);
-            res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
-        });
-});
 
+// Llamar a la ruta;
+app.use(masctotaRoutes);
 
-// Get all
-app.get('/api/mascotas', async (req, res) => { 
-    try {
-        const todasMascotas = await db.select('*').from('mascotas').where({ active: true });
-        res.status(200).json(todasMascotas);
-    } catch (error) {
-        console.log(error);
-        res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
-    }
-});
-
-// Get one by id
-// /api/mascotas/1
-// /api/mascotas/2
-app.get('/api/mascotas/:id', async (req, res) => {
-    try {
-        const idMascota = req.params.id;
-        const mascota = await db.select('*').from('mascotas').where({ mascota_id: idMascota, active: true });
-        if (mascota.length === 0) {
-            res.status(404).json({ message: 'Mascota no encontrada' });
-        } else {
-            res.status(200).json(mascota[0]);
-        }
-    } catch (error) {
-        console.log(error);
-        res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
-    }
-});
-
-
-// Update one by id
-app.put('/api/mascotas/:id', async (req, res) => {
-    try {
-        const idMascota = req.params.id;
-        const bodyToUpdate = req.body;
-
-        const updatedMascota = await db
-            .update(bodyToUpdate)
-            .from('mascotas')
-            .where({ mascota_id: idMascota, active: true })
-            .returning(['mascota_id', 'name', 'breed', 'age', 'active']);
-
-        res.status(200).json(updatedMascota);
-        
-    } catch (error) {
-        console.log(error);
-        res.status(400).json({ error: 'Tuvimos un error, intenta más tarde' });
-    }
-});
 
 // Delete one by id
 app.delete('/api/mascotas/:id', async (req, res) => {
